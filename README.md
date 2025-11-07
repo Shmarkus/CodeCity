@@ -26,6 +26,12 @@ Built to last 10+ years using only standard Unix tools and web technologies:
 - **HTML/CSS/JavaScript** - Pure web standards, no frameworks
 - **JSON** - Universal data format
 
+## Try It Out
+
+**[View Live Demo →](https://shmarkus.github.io/CodeCity/)**
+
+Experience the visualizer with a sample e-commerce application codebase. Interact with the 3D city, explore git metadata visualizations, and see how code structure translates to urban architecture.
+
 ## Quick Start
 
 1. **Generate data from your source code:**

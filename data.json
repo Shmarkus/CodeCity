@@ -1,0 +1,441 @@
+{
+  "packages": [
+    {
+      "name": "com.example.backend.controllers",
+      "classes": [
+        {
+          "name": "UserController",
+          "linesOfCode": 245,
+          "gitMetadata": {
+            "commits": 87,
+            "authors": 5,
+            "lastModified": "2025-11-05T14:23:00+02:00"
+          }
+        },
+        {
+          "name": "AuthController",
+          "linesOfCode": 189,
+          "gitMetadata": {
+            "commits": 134,
+            "authors": 8,
+            "lastModified": "2025-11-06T09:15:00+02:00"
+          }
+        },
+        {
+          "name": "ProductController",
+          "linesOfCode": 312,
+          "gitMetadata": {
+            "commits": 56,
+            "authors": 4,
+            "lastModified": "2025-10-28T16:45:00+02:00"
+          }
+        },
+        {
+          "name": "OrderController",
+          "linesOfCode": 278,
+          "gitMetadata": {
+            "commits": 92,
+            "authors": 6,
+            "lastModified": "2025-11-04T11:30:00+02:00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "com.example.backend.services",
+      "classes": [
+        {
+          "name": "UserService",
+          "linesOfCode": 423,
+          "gitMetadata": {
+            "commits": 112,
+            "authors": 7,
+            "lastModified": "2025-11-06T10:20:00+02:00"
+          }
+        },
+        {
+          "name": "AuthService",
+          "linesOfCode": 367,
+          "gitMetadata": {
+            "commits": 145,
+            "authors": 9,
+            "lastModified": "2025-11-05T15:42:00+02:00"
+          }
+        },
+        {
+          "name": "EmailService",
+          "linesOfCode": 156,
+          "gitMetadata": {
+            "commits": 34,
+            "authors": 3,
+            "lastModified": "2025-10-15T08:30:00+02:00"
+          }
+        },
+        {
+          "name": "PaymentService",
+          "linesOfCode": 512,
+          "gitMetadata": {
+            "commits": 201,
+            "authors": 6,
+            "lastModified": "2025-11-03T13:25:00+02:00"
+          }
+        },
+        {
+          "name": "NotificationService",
+          "linesOfCode": 198,
+          "gitMetadata": {
+            "commits": 67,
+            "authors": 5,
+            "lastModified": "2025-10-20T17:10:00+02:00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "com.example.backend.models",
+      "classes": [
+        {
+          "name": "User",
+          "linesOfCode": 178,
+          "gitMetadata": {
+            "commits": 95,
+            "authors": 8,
+            "lastModified": "2025-11-02T12:15:00+02:00"
+          }
+        },
+        {
+          "name": "Product",
+          "linesOfCode": 134,
+          "gitMetadata": {
+            "commits": 43,
+            "authors": 4,
+            "lastModified": "2025-10-25T14:30:00+02:00"
+          }
+        },
+        {
+          "name": "Order",
+          "linesOfCode": 156,
+          "gitMetadata": {
+            "commits": 78,
+            "authors": 5,
+            "lastModified": "2025-11-01T09:45:00+02:00"
+          }
+        },
+        {
+          "name": "Payment",
+          "linesOfCode": 89,
+          "gitMetadata": {
+            "commits": 56,
+            "authors": 3,
+            "lastModified": "2025-10-18T11:20:00+02:00"
+          }
+        },
+        {
+          "name": "Address",
+          "linesOfCode": 67,
+          "gitMetadata": {
+            "commits": 23,
+            "authors": 2,
+            "lastModified": "2025-09-30T16:00:00+02:00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "com.example.backend.repositories",
+      "classes": [
+        {
+          "name": "UserRepository",
+          "linesOfCode": 145,
+          "gitMetadata": {
+            "commits": 67,
+            "authors": 4,
+            "lastModified": "2025-11-01T10:30:00+02:00"
+          }
+        },
+        {
+          "name": "ProductRepository",
+          "linesOfCode": 123,
+          "gitMetadata": {
+            "commits": 45,
+            "authors": 3,
+            "lastModified": "2025-10-22T13:45:00+02:00"
+          }
+        },
+        {
+          "name": "OrderRepository",
+          "linesOfCode": 167,
+          "gitMetadata": {
+            "commits": 89,
+            "authors": 5,
+            "lastModified": "2025-10-29T15:20:00+02:00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "com.example.frontend.components",
+      "classes": [
+        {
+          "name": "Header",
+          "linesOfCode": 98,
+          "gitMetadata": {
+            "commits": 45,
+            "authors": 6,
+            "lastModified": "2025-11-07T08:15:00+02:00"
+          }
+        },
+        {
+          "name": "Navigation",
+          "linesOfCode": 134,
+          "gitMetadata": {
+            "commits": 78,
+            "authors": 7,
+            "lastModified": "2025-11-06T16:30:00+02:00"
+          }
+        },
+        {
+          "name": "ProductCard",
+          "linesOfCode": 187,
+          "gitMetadata": {
+            "commits": 56,
+            "authors": 4,
+            "lastModified": "2025-11-05T11:45:00+02:00"
+          }
+        },
+        {
+          "name": "ShoppingCart",
+          "linesOfCode": 289,
+          "gitMetadata": {
+            "commits": 123,
+            "authors": 8,
+            "lastModified": "2025-11-07T09:20:00+02:00"
+          }
+        },
+        {
+          "name": "UserProfile",
+          "linesOfCode": 223,
+          "gitMetadata": {
+            "commits": 87,
+            "authors": 5,
+            "lastModified": "2025-11-04T14:00:00+02:00"
+          }
+        },
+        {
+          "name": "LoginForm",
+          "linesOfCode": 156,
+          "gitMetadata": {
+            "commits": 92,
+            "authors": 7,
+            "lastModified": "2025-11-06T12:30:00+02:00"
+          }
+        },
+        {
+          "name": "Footer",
+          "linesOfCode": 67,
+          "gitMetadata": {
+            "commits": 23,
+            "authors": 4,
+            "lastModified": "2025-10-12T15:45:00+02:00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "com.example.frontend.pages",
+      "classes": [
+        {
+          "name": "HomePage",
+          "linesOfCode": 234,
+          "gitMetadata": {
+            "commits": 67,
+            "authors": 6,
+            "lastModified": "2025-11-05T10:15:00+02:00"
+          }
+        },
+        {
+          "name": "ProductPage",
+          "linesOfCode": 312,
+          "gitMetadata": {
+            "commits": 89,
+            "authors": 5,
+            "lastModified": "2025-11-03T14:30:00+02:00"
+          }
+        },
+        {
+          "name": "CheckoutPage",
+          "linesOfCode": 445,
+          "gitMetadata": {
+            "commits": 134,
+            "authors": 7,
+            "lastModified": "2025-11-07T11:00:00+02:00"
+          }
+        },
+        {
+          "name": "ProfilePage",
+          "linesOfCode": 198,
+          "gitMetadata": {
+            "commits": 56,
+            "authors": 4,
+            "lastModified": "2025-11-02T16:20:00+02:00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "com.example.frontend.utils",
+      "classes": [
+        {
+          "name": "Validator",
+          "linesOfCode": 178,
+          "gitMetadata": {
+            "commits": 45,
+            "authors": 3,
+            "lastModified": "2025-10-28T09:30:00+02:00"
+          }
+        },
+        {
+          "name": "Formatter",
+          "linesOfCode": 134,
+          "gitMetadata": {
+            "commits": 34,
+            "authors": 3,
+            "lastModified": "2025-10-19T13:45:00+02:00"
+          }
+        },
+        {
+          "name": "ApiClient",
+          "linesOfCode": 267,
+          "gitMetadata": {
+            "commits": 98,
+            "authors": 6,
+            "lastModified": "2025-11-06T15:10:00+02:00"
+          }
+        },
+        {
+          "name": "LocalStorage",
+          "linesOfCode": 89,
+          "gitMetadata": {
+            "commits": 23,
+            "authors": 2,
+            "lastModified": "2025-09-15T11:00:00+02:00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "com.example.shared.utils",
+      "classes": [
+        {
+          "name": "StringUtils",
+          "linesOfCode": 145,
+          "gitMetadata": {
+            "commits": 56,
+            "authors": 5,
+            "lastModified": "2025-10-10T14:20:00+02:00"
+          }
+        },
+        {
+          "name": "DateUtils",
+          "linesOfCode": 167,
+          "gitMetadata": {
+            "commits": 67,
+            "authors": 4,
+            "lastModified": "2025-10-25T10:45:00+02:00"
+          }
+        },
+        {
+          "name": "ValidationUtils",
+          "linesOfCode": 198,
+          "gitMetadata": {
+            "commits": 78,
+            "authors": 5,
+            "lastModified": "2025-11-01T13:30:00+02:00"
+          }
+        },
+        {
+          "name": "Logger",
+          "linesOfCode": 234,
+          "gitMetadata": {
+            "commits": 123,
+            "authors": 7,
+            "lastModified": "2025-11-04T09:15:00+02:00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "com.example.shared.config",
+      "classes": [
+        {
+          "name": "AppConfig",
+          "linesOfCode": 123,
+          "gitMetadata": {
+            "commits": 89,
+            "authors": 6,
+            "lastModified": "2025-11-07T10:30:00+02:00"
+          }
+        },
+        {
+          "name": "DatabaseConfig",
+          "linesOfCode": 98,
+          "gitMetadata": {
+            "commits": 67,
+            "authors": 4,
+            "lastModified": "2025-10-30T12:00:00+02:00"
+          }
+        },
+        {
+          "name": "SecurityConfig",
+          "linesOfCode": 278,
+          "gitMetadata": {
+            "commits": 156,
+            "authors": 8,
+            "lastModified": "2025-11-06T14:45:00+02:00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "com.example.shared.exceptions",
+      "classes": [
+        {
+          "name": "ValidationException",
+          "linesOfCode": 45,
+          "gitMetadata": {
+            "commits": 12,
+            "authors": 2,
+            "lastModified": "2025-08-20T10:00:00+02:00"
+          }
+        },
+        {
+          "name": "AuthenticationException",
+          "linesOfCode": 56,
+          "gitMetadata": {
+            "commits": 23,
+            "authors": 3,
+            "lastModified": "2025-09-05T14:30:00+02:00"
+          }
+        },
+        {
+          "name": "NotFoundException",
+          "linesOfCode": 34,
+          "gitMetadata": {
+            "commits": 8,
+            "authors": 2,
+            "lastModified": "2025-07-15T09:15:00+02:00"
+          }
+        },
+        {
+          "name": "BusinessException",
+          "linesOfCode": 67,
+          "gitMetadata": {
+            "commits": 34,
+            "authors": 4,
+            "lastModified": "2025-10-08T16:45:00+02:00"
+          }
+        }
+      ]
+    }
+  ]
+}
