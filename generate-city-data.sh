@@ -93,9 +93,9 @@ function extract_package_name() {
             # Try to extract package name
             local package_line
             package_line=$(grep "$grep_pattern" "$file" 2>/dev/null | head -n 1 || true)
-            
+
             if [[ -n "$package_line" ]]; then
-                echo "$package_line" | sed "$sed_pattern"
+                echo "$package_line" | sed "$sed_pattern" | tr -d '\n\r'
                 return
             fi
         fi
@@ -104,7 +104,7 @@ function extract_package_name() {
     # Default: use directory path as package name
     local dir_path
     dir_path=$(dirname "$file")
-    echo "${dir_path}" | sed 's|/|.|g' | sed 's|^\.*||'
+    echo "${dir_path}" | sed 's|/|.|g' | sed 's|^\.*||' | tr -d '\n\r'
 }
 
 # Extract class/type name from a source file
@@ -129,10 +129,10 @@ function extract_class_name() {
                 # Extract the class name
                 if [[ "$awk_field" == "sed" ]]; then
                     # Use sed to extract name after class/enum/interface/record keyword
-                    echo "$class_line" | sed -E 's/^.*\<(class|enum|interface|@interface|record)[[:space:]]+([A-Za-z0-9_]+).*/\2/'
+                    echo "$class_line" | sed -E 's/^.*\<(class|enum|interface|@interface|record)[[:space:]]+([A-Za-z0-9_]+).*/\2/' | tr -d '\n\r'
                 else
                     # Use awk field extraction (remove { and other characters)
-                    echo "$class_line" | awk "{print \$$awk_field}" | sed 's/{//g' | sed 's/ //g'
+                    echo "$class_line" | awk "{print \$$awk_field}" | sed 's/{//g' | sed 's/ //g' | tr -d '\n\r'
                 fi
                 return
             fi
@@ -140,7 +140,7 @@ function extract_class_name() {
     done
     
     # Default: use filename without extension
-    basename "$file" ".$extension"
+    basename "$file" ".$extension" | tr -d '\n\r'
 }
 
 # Count non-blank lines in a file (excluding comments)

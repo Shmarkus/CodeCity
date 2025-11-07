@@ -33,6 +33,9 @@ const CONFIG = {
     offsetY: 100,
     scale: 1,
 
+    // Layout strategy: 'quadrant' or 'grid'
+    layoutStrategy: 'quadrant',
+
     // Git visualization options
     showGitData: true,
     gitVisualization: {
@@ -71,9 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Setup mouse interaction
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('click', handleClick);
+    canvas.addEventListener('wheel', handleWheel, { passive: false });
 
-    // Setup git controls
+    // Setup controls
     setupGitControls();
+    setupLayoutControls();
 
     // Load data
     loadData();
@@ -214,6 +219,109 @@ function calculateBuildingFootprint(linesOfCode) {
     return { width, depth };
 }
 
+// Layout packages in a quadrant-based strategy (downtown in center, suburbs on edges)
+function layoutPackagesQuadrant(packagesWithMass) {
+    // Divide into quartiles for quadrant placement
+    const quartileSize = Math.ceil(packagesWithMass.length / 4);
+    const q1 = packagesWithMass.slice(0, quartileSize);                          // Largest (center)
+    const q2 = packagesWithMass.slice(quartileSize, quartileSize * 2);           // Large (right)
+    const q3 = packagesWithMass.slice(quartileSize * 2, quartileSize * 3);       // Medium (bottom)
+    const q4 = packagesWithMass.slice(quartileSize * 3);                         // Smallest (left)
+
+    // Calculate appropriate row width based on number of packages to make layout more square
+    // Aim for roughly square layout within each quadrant
+    const packagesPerQuadrant = Math.ceil(packagesWithMass.length / 4);
+    const packagesPerRowInQuadrant = Math.ceil(Math.sqrt(packagesPerQuadrant));
+    const estimatedPackageSize = 150; // Average package width estimate
+    const maxRowWidth = packagesPerRowInQuadrant * estimatedPackageSize;
+
+    // Layout each quadrant
+    const quadrants = [
+        { packages: q1, startX: maxRowWidth, startY: maxRowWidth },   // Center (downtown)
+        { packages: q2, startX: maxRowWidth * 2, startY: 0 },         // Right
+        { packages: q3, startX: 0, startY: maxRowWidth * 2 },         // Bottom
+        { packages: q4, startX: 0, startY: 0 }                        // Top-left
+    ];
+
+    quadrants.forEach(quadrant => {
+        layoutPackagesInRegion(quadrant.packages, quadrant.startX, quadrant.startY, maxRowWidth);
+    });
+}
+
+// Layout packages in a simple grid (largest to smallest, left to right, top to bottom)
+function layoutPackagesGrid(packagesWithMass) {
+    // Calculate row width to make layout roughly square
+    const packagesPerRow = Math.ceil(Math.sqrt(packagesWithMass.length));
+    const estimatedPackageSize = 150;
+    const maxRowWidth = packagesPerRow * estimatedPackageSize;
+
+    layoutPackagesInRegion(packagesWithMass, 0, 0, maxRowWidth);
+}
+
+// Layout packages in a specific region with wrapping
+function layoutPackagesInRegion(packagesWithMass, startX, startY, maxRowWidth) {
+    let packageX = startX;
+    let packageY = startY;
+    let maxRowHeight = 0;
+
+    packagesWithMass.forEach((pkgWithMass, idx) => {
+        const pkg = pkgWithMass.pkg;
+        const pkgLayout = calculatePackageLayout(pkg);
+
+        // Check if we need to wrap to next row
+        if (idx > 0 && packageX - startX + pkgLayout.width > maxRowWidth) {
+            packageX = startX;
+            packageY += maxRowHeight + CONFIG.packageSpacing;
+            maxRowHeight = 0;
+        }
+
+        // Create package platform
+        const packageObj = {
+            name: pkg.name,
+            x: packageX,
+            y: packageY,
+            width: pkgLayout.width,
+            height: pkgLayout.height,
+            depth: pkgLayout.depth,
+            z: 0,
+            buildings: []
+        };
+
+        // Create buildings for this package
+        pkgLayout.positions.forEach(pos => {
+            const buildingHeight = Math.max(
+                CONFIG.minBuildingHeight,
+                pos.class.linesOfCode * CONFIG.locToHeightScale
+            );
+
+            // Calculate footprint based on LOC for visual variety
+            const footprint = calculateBuildingFootprint(pos.class.linesOfCode);
+
+            const building = {
+                className: pos.class.name,
+                packageName: pkg.name,
+                linesOfCode: pos.class.linesOfCode,
+                gitMetadata: pos.class.gitMetadata,
+                x: packageX + pos.x,
+                y: packageY + pos.y,
+                z: 5, // Buildings sit on top of platform
+                width: footprint.width,
+                depth: footprint.depth,
+                height: buildingHeight,
+                color: CONFIG.buildingBaseColor
+            };
+
+            buildings.push(building);
+            packageObj.buildings.push(building);
+        });
+
+        packages.push(packageObj);
+
+        packageX += pkgLayout.width + CONFIG.packageSpacing;
+        maxRowHeight = Math.max(maxRowHeight, pkgLayout.depth);
+    });
+}
+
 // Process data and create building/package objects
 function processData(data) {
     buildings = [];
@@ -225,84 +333,12 @@ function processData(data) {
         mass: calculatePackageMass(pkg)
     })).sort((a, b) => b.mass - a.mass);
 
-    // Divide into quartiles for quadrant placement
-    const quartileSize = Math.ceil(packagesWithMass.length / 4);
-    const q1 = packagesWithMass.slice(0, quartileSize);                          // Largest (center)
-    const q2 = packagesWithMass.slice(quartileSize, quartileSize * 2);           // Large (right)
-    const q3 = packagesWithMass.slice(quartileSize * 2, quartileSize * 3);       // Medium (bottom)
-    const q4 = packagesWithMass.slice(quartileSize * 3);                         // Smallest (left)
-
-    // Layout each quadrant
-    const quadrants = [
-        { packages: q1, startX: 500, startY: 500 },   // Center-ish (downtown)
-        { packages: q2, startX: 1500, startY: 0 },    // Right
-        { packages: q3, startX: 500, startY: 1500 },  // Bottom
-        { packages: q4, startX: 0, startY: 0 }        // Left
-    ];
-
-    quadrants.forEach(quadrant => {
-        let packageX = quadrant.startX;
-        let packageY = quadrant.startY;
-        let maxRowHeight = 0;
-        const maxRowWidth = 1000;
-
-        quadrant.packages.forEach((pkgWithMass, idx) => {
-            const pkg = pkgWithMass.pkg;
-            const pkgLayout = calculatePackageLayout(pkg);
-
-            // Check if we need to wrap to next row within quadrant
-            if (idx > 0 && packageX - quadrant.startX + pkgLayout.width > maxRowWidth) {
-                packageX = quadrant.startX;
-                packageY += maxRowHeight + CONFIG.packageSpacing;
-                maxRowHeight = 0;
-            }
-
-            // Create package platform
-            const packageObj = {
-                name: pkg.name,
-                x: packageX,
-                y: packageY,
-                width: pkgLayout.width,
-                height: pkgLayout.height,
-                depth: pkgLayout.depth,
-                z: 0,
-                buildings: []
-            };
-
-            // Create buildings for this package
-            pkgLayout.positions.forEach(pos => {
-                const buildingHeight = Math.max(
-                    CONFIG.minBuildingHeight,
-                    pos.class.linesOfCode * CONFIG.locToHeightScale
-                );
-
-                // Calculate footprint based on LOC for visual variety
-                const footprint = calculateBuildingFootprint(pos.class.linesOfCode);
-
-                const building = {
-                    className: pos.class.name,
-                    packageName: pkg.name,
-                    linesOfCode: pos.class.linesOfCode,
-                    gitMetadata: pos.class.gitMetadata, // Include git metadata
-                    x: packageX + pos.x,
-                    y: packageY + pos.y,
-                    z: 5, // Buildings sit on top of platform
-                    width: footprint.width,
-                    depth: footprint.depth,
-                    height: buildingHeight,
-                    color: CONFIG.buildingBaseColor
-                };
-
-                buildings.push(building);
-                packageObj.buildings.push(building);
-            });
-
-            packages.push(packageObj);
-
-            packageX += pkgLayout.width + CONFIG.packageSpacing;
-            maxRowHeight = Math.max(maxRowHeight, pkgLayout.depth);
-        });
-    });
+    // Choose layout strategy
+    if (CONFIG.layoutStrategy === 'grid') {
+        layoutPackagesGrid(packagesWithMass);
+    } else {
+        layoutPackagesQuadrant(packagesWithMass);
+    }
 
     // Calculate git normalization values if git data is present
     calculateGitNormalization(data);
@@ -366,6 +402,8 @@ function calculateGitNormalization(data) {
 function calculateViewTransform() {
     if (buildings.length === 0 && packages.length === 0) return;
 
+    console.log('calculateViewTransform: Starting calculation');
+
     // Find bounding box of entire city in 3D space
     let minX = Infinity, maxX = -Infinity;
     let minY = Infinity, maxY = -Infinity;
@@ -396,16 +434,22 @@ function calculateViewTransform() {
     const centerY = (minY + maxY) / 2;
     const centerZ = (minZ + maxZ) / 2;
 
-    // Project bounding box corners to screen space to find screen bounds
+    // Project bounding box corners to isometric space WITHOUT scale/offset
+    // (We need raw isometric coordinates to calculate proper scale)
+    const toIsoRaw = (x, y, z) => ({
+        x: (x - y) * Math.cos(CONFIG.isoAngle),
+        y: (x + y) * Math.sin(CONFIG.isoAngle) - z
+    });
+
     const corners = [
-        toIsometric(minX, minY, minZ),
-        toIsometric(maxX, minY, minZ),
-        toIsometric(maxX, maxY, minZ),
-        toIsometric(minX, maxY, minZ),
-        toIsometric(minX, minY, maxZ),
-        toIsometric(maxX, minY, maxZ),
-        toIsometric(maxX, maxY, maxZ),
-        toIsometric(minX, maxY, maxZ)
+        toIsoRaw(minX, minY, minZ),
+        toIsoRaw(maxX, minY, minZ),
+        toIsoRaw(maxX, maxY, minZ),
+        toIsoRaw(minX, maxY, minZ),
+        toIsoRaw(minX, minY, maxZ),
+        toIsoRaw(maxX, minY, maxZ),
+        toIsoRaw(maxX, maxY, maxZ),
+        toIsoRaw(minX, maxY, maxZ)
     ];
 
     let screenMinX = Infinity, screenMaxX = -Infinity;
@@ -432,10 +476,10 @@ function calculateViewTransform() {
 
     CONFIG.scale = newScale;
 
-    // Recalculate screen bounds with new scale
+    // Recalculate screen bounds with new scale (scale around origin)
     const scaledCorners = corners.map(c => ({
-        x: (c.x - CONFIG.offsetX) * newScale + CONFIG.offsetX,
-        y: (c.y - CONFIG.offsetY) * newScale + CONFIG.offsetY
+        x: c.x * newScale,
+        y: c.y * newScale
     }));
 
     screenMinX = Math.min(...scaledCorners.map(c => c.x));
@@ -450,8 +494,16 @@ function calculateViewTransform() {
     const canvasCenterX = canvas.width / 2;
     const canvasCenterY = canvas.height / 2;
 
-    CONFIG.offsetX += (canvasCenterX - screenCenterX);
-    CONFIG.offsetY += (canvasCenterY - screenCenterY);
+    CONFIG.offsetX = (canvasCenterX - screenCenterX);
+    CONFIG.offsetY = (canvasCenterY - screenCenterY);
+
+    console.log('calculateViewTransform: Results', {
+        bounds3D: { minX, maxX, minY, maxY, minZ, maxZ },
+        screenBounds: { screenMinX, screenMaxX, screenMinY, screenMaxY },
+        scale: CONFIG.scale,
+        offset: { x: CONFIG.offsetX, y: CONFIG.offsetY },
+        canvas: { width: canvas.width, height: canvas.height }
+    });
 }
 
 // Calculate layout for buildings within a package
@@ -772,6 +824,36 @@ function handleClick(event) {
     }
 }
 
+// Handle mouse wheel for zooming
+function handleWheel(event) {
+    event.preventDefault();
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Calculate zoom factor
+    const zoomIntensity = 0.1;
+    const wheel = event.deltaY < 0 ? 1 : -1;
+    const zoom = Math.exp(wheel * zoomIntensity);
+
+    // Calculate mouse position in world space before zoom
+    const worldX = (mouseX - CONFIG.offsetX) / CONFIG.scale;
+    const worldY = (mouseY - CONFIG.offsetY) / CONFIG.scale;
+
+    // Update scale
+    const newScale = CONFIG.scale * zoom;
+
+    // Clamp scale to reasonable bounds
+    CONFIG.scale = Math.max(0.1, Math.min(5, newScale));
+
+    // Adjust offset to keep mouse position fixed
+    CONFIG.offsetX = mouseX - worldX * CONFIG.scale;
+    CONFIG.offsetY = mouseY - worldY * CONFIG.scale;
+
+    renderCity();
+}
+
 // Show building information
 function showBuildingInfo(building) {
     const details = document.getElementById('details');
@@ -926,4 +1008,20 @@ function showGitControlsIfNeeded() {
         if (gitControls) gitControls.style.display = 'block';
         if (gitLegend) gitLegend.style.display = 'block';
     }
+}
+
+// Setup layout strategy controls
+function setupLayoutControls() {
+    const layoutRadios = document.querySelectorAll('input[name="layout"]');
+
+    layoutRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            CONFIG.layoutStrategy = e.target.value;
+            // Reload the data to apply new layout (processData calls calculateViewTransform)
+            if (projectData) {
+                processData(projectData);
+                renderCity();
+            }
+        });
+    });
 }
