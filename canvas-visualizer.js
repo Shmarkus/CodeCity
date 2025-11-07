@@ -721,17 +721,25 @@ function handleMouseMove(event) {
     const mouseY = event.clientY - rect.top;
 
     let foundHovered = null;
+    let maxDepth = -Infinity;
 
-    // Check buildings in reverse order (front to back)
-    for (let i = buildings.length - 1; i >= 0; i--) {
+    // Check all buildings and find the frontmost one under the mouse
+    for (let i = 0; i < buildings.length; i++) {
         const building = buildings[i];
         if (building.screenBounds &&
             mouseX >= building.screenBounds.minX &&
             mouseX <= building.screenBounds.maxX &&
             mouseY >= building.screenBounds.minY &&
             mouseY <= building.screenBounds.maxY) {
-            foundHovered = building;
-            break;
+
+            // Calculate depth (higher value = closer to viewer in isometric)
+            const depth = building.y + building.x;
+
+            // Pick the building closest to the viewer
+            if (depth > maxDepth) {
+                maxDepth = depth;
+                foundHovered = building;
+            }
         }
     }
 
