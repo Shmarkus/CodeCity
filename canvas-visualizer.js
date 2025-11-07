@@ -533,6 +533,9 @@ function renderCity() {
 
 // Draw a package platform (rectangular base)
 function drawPackagePlatform(pkg) {
+    // Save canvas state to prevent state bleeding
+    ctx.save();
+
     const corners = [
         toIsometric(pkg.x, pkg.y, pkg.z),
         toIsometric(pkg.x + pkg.width, pkg.y, pkg.z),
@@ -580,6 +583,9 @@ function drawPackagePlatform(pkg) {
     ctx.fill();
     ctx.strokeStyle = CONFIG.packageColor;
     ctx.stroke();
+
+    // Restore canvas state
+    ctx.restore();
 }
 
 // Check if a class is deprecated
@@ -590,6 +596,9 @@ function isDeprecated(className) {
 
 // Draw a building (isometric box)
 function drawBuilding(building) {
+    // Save canvas state to prevent state bleeding between buildings
+    ctx.save();
+
     const isHovered = hoveredBuilding === building;
     const isSelected = selectedBuilding === building;
     const deprecated = isDeprecated(building.className);
@@ -688,10 +697,6 @@ function drawBuilding(building) {
     ctx.strokeStyle = shades ? darken(shades.left, 0.5) : darken(baseColor, 0.5);
     ctx.stroke();
 
-    // Reset shadow and line dash
-    ctx.shadowBlur = 0;
-    ctx.setLineDash([]);
-
     // Store screen coordinates for hit testing
     building.screenBounds = {
         minX: Math.min(corners[0].x, corners[1].x, corners[2].x, corners[3].x, corners[4].x, corners[5].x, corners[6].x, corners[7].x),
@@ -699,6 +704,9 @@ function drawBuilding(building) {
         minY: Math.min(corners[0].y, corners[1].y, corners[2].y, corners[3].y, corners[4].y, corners[5].y, corners[6].y, corners[7].y),
         maxY: Math.max(corners[0].y, corners[1].y, corners[2].y, corners[3].y, corners[4].y, corners[5].y, corners[6].y, corners[7].y)
     };
+
+    // Restore canvas state to prevent state bleeding to other buildings
+    ctx.restore();
 }
 
 // Color utility functions

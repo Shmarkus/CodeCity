@@ -43,17 +43,17 @@ Built to last 10+ years using only standard Unix tools and web technologies:
 
    **Option A: Using a local web server (recommended)**
    ```bash
-   # Copy output.json to the same directory as index-3d.html
+   # Copy output.json to the same directory as index.html
    cp output.json data.json
 
    # Start a simple web server
    python3 -m http.server 8000
 
-   # Open http://localhost:8000/index-3d.html in your browser
+   # Open http://localhost:8000/index.html in your browser
    ```
 
    **Option B: Direct file access**
-   - Open `index-3d.html` directly in any web browser
+   - Open `index.html` directly in any web browser
    - Click "Choose File" and select your `output.json` file
    - The visualizer works entirely in the browser (no server needed!)
 
@@ -169,12 +169,12 @@ Modify `count_lines_of_code()` to exclude your language's comment syntax.
 Edit `canvas-visualizer.js`:
 - `CONFIG.locToHeightScale` - Change building height scale
 - `CONFIG.buildingWidth` - Change building width
-- CSS in `index-3d.html` - Change colors, fonts, etc.
+- CSS in `index.html` - Change colors, fonts, etc.
 
 ## Files
 
 - `generate-city-data.sh` - Data generator (bash script)
-- `index-3d.html` - 3D Isometric Visualizer
+- `index.html` - 3D Isometric Visualizer
 - `canvas-visualizer.js` - 3D Isometric rendering with Canvas
 - `git-metadata-visualizer.js` - Git metadata color management
 - `data.json` - Generated visualization data
@@ -192,12 +192,11 @@ Edit `canvas-visualizer.js`:
 ## Future Enhancements
 
 The architecture supports adding:
-- More metrics (cognitive complexity, change frequency)
-- Git integration (commits, authors, churn)
-- Language-specific analyzers (when needed)
-- 3D visualization (WebGL)
-- Color coding by metrics
-- Time-series animation
+- More metrics (cognitive complexity, cyclomatic complexity)
+- Language-specific analyzers (method/attribute counting)
+- WebGL-based 3D visualization for larger codebases
+- Time-series animation (visualize code evolution over time)
+- Export visualizations as images or videos
 
 ## Why This Approach?
 
