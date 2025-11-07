@@ -43,17 +43,17 @@ Built to last 10+ years using only standard Unix tools and web technologies:
 
    **Option A: Using a local web server (recommended)**
    ```bash
-   # Copy output.json to the same directory as index.html
+   # Copy output.json to the same directory as index-3d.html
    cp output.json data.json
 
    # Start a simple web server
    python3 -m http.server 8000
 
-   # Open http://localhost:8000 in your browser
+   # Open http://localhost:8000/index-3d.html in your browser
    ```
 
    **Option B: Direct file access**
-   - Open `index.html` directly in any web browser
+   - Open `index-3d.html` directly in any web browser
    - Click "Choose File" and select your `output.json` file
    - The visualizer works entirely in the browser (no server needed!)
 
@@ -110,14 +110,13 @@ The script:
 
 ### 2. Visualization (HTML)
 
-**Two visualizer options:**
-
-**3D Isometric (index-3d.html)** - Recommended
+**3D Isometric Visualization:**
 - Isometric 3D projection using pure Canvas 2D
 - Zero dependencies (future-proof)
 - Renders packages as gray platforms
 - Renders classes as 3D buildings (height = lines of code)
 - Interactive hover and click selection
+- Quadrant-based layout: largest packages in center (downtown), smallest on edges (suburbs)
 - Professional isometric view like CodeCity
 - **Git metadata visualization:**
   - Color by change frequency (red = hotspots, blue = stable)
@@ -125,11 +124,6 @@ The script:
   - Orange glow for recent changes (< 7 days)
   - Dashed borders for deprecated classes
   - Toggle controls for each metric
-
-**2D Top-Down (index.html)** - Legacy
-- Simple 2D grid layout
-- Faster for very large codebases
-- Good for quick overview
 
 ## Examples
 
@@ -165,19 +159,19 @@ By default, files matching `*Test.*` are excluded. To change this:
 Modify `count_lines_of_code()` to exclude your language's comment syntax.
 
 ### Adjust visualization
-Edit `visualizer.js`:
+Edit `canvas-visualizer.js`:
 - `CONFIG.locToHeightScale` - Change building height scale
 - `CONFIG.buildingWidth` - Change building width
-- CSS in `index.html` - Change colors, fonts, etc.
+- CSS in `index-3d.html` - Change colors, fonts, etc.
 
 ## Files
 
 - `generate-city-data.sh` - Data generator (bash script)
-- `index.html` - 2D Visualizer interface
-- `visualizer.js` - 2D Rendering logic
-- `index-3d.html` - **3D Isometric Visualizer** (recommended)
+- `index-3d.html` - 3D Isometric Visualizer
 - `canvas-visualizer.js` - 3D Isometric rendering with Canvas
+- `git-metadata-visualizer.js` - Git metadata color management
 - `data.json` - Generated visualization data
+- `CLAUDE.md` - Development guide for future Claude Code sessions
 
 ## Requirements
 
