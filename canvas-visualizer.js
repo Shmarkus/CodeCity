@@ -483,14 +483,18 @@ function calculatePackageLayout(pkg) {
             class: cls
         });
 
+        // Update tracking variables with actual building dimensions
+        const buildingEndX = currentX + footprint.width;
+        const buildingEndY = currentY + footprint.depth;
+
         currentX += footprint.width + CONFIG.buildingSpacing;
         rowHeight = Math.max(rowHeight, footprint.depth);
-        maxWidth = Math.max(maxWidth, currentX);
-        totalDepth = Math.max(totalDepth, currentY + footprint.depth);
+        maxWidth = Math.max(maxWidth, buildingEndX);
+        totalDepth = Math.max(totalDepth, buildingEndY);
     });
 
     return {
-        width: Math.max(maxWidth + CONFIG.packagePadding, 180),
+        width: maxWidth + CONFIG.packagePadding,
         height: 5, // Platform height
         depth: totalDepth + CONFIG.packagePadding,
         positions: positions
