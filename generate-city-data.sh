@@ -221,8 +221,19 @@ function find_source_files() {
         fi
     done
     
-    # Execute find command and filter out test files
-    find "$source_dir" -type f \( "${find_args[@]}" \) | grep -v 'Test\.[^/]*$'
+    # Execute find command and filter out test files and common dependency/build directories
+    find "$source_dir" -type f \( "${find_args[@]}" \) \
+        -not -path "*/node_modules/*" \
+        -not -path "*/vendor/*" \
+        -not -path "*/bower_components/*" \
+        -not -path "*/.git/*" \
+        -not -path "*/dist/*" \
+        -not -path "*/build/*" \
+        -not -path "*/target/*" \
+        -not -path "*/.venv/*" \
+        -not -path "*/venv/*" \
+        -not -path "*/__pycache__/*" \
+        | grep -v 'Test\.[^/]*$'
 }
 
 # Analyze a single source file

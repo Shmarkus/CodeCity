@@ -75,9 +75,16 @@ Out of the box:
 ### 1. Data Generation (Bash Script)
 
 The script:
-1. Finds all source files in your project (excludes `*Test.*` files automatically)
+1. Finds all source files in your project
+   - Excludes `*Test.*` files automatically
+   - Excludes common dependency/build directories:
+     - `node_modules/` (JavaScript/TypeScript)
+     - `vendor/` (PHP/Go)
+     - `bower_components/` (JavaScript)
+     - `dist/`, `build/`, `target/` (build outputs)
+     - `venv/`, `.venv/`, `__pycache__/` (Python)
 2. Extracts package/namespace names
-3. Extracts class/type names
+3. Extracts class/type names (including enums, interfaces, records)
 4. Counts non-blank lines of code
 5. **Extracts git metadata (if in a git repository):**
    - Number of commits per file
