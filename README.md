@@ -8,13 +8,17 @@ A simple, durable solution for visualizing any codebase as a 3D city.
 
 <table>
 <tr>
-<td width="50%">
+<td width="33%">
 <img src="doc/codecity.png" alt="Original CodeCity">
 <p align="center"><i>Original CodeCity concept by Richard Wettel</i></p>
 </td>
-<td width="50%">
+<td width="33%">
 <img src="doc/screenshot.png" alt="Our Implementation">
 <p align="center"><i>Our implementation with git metadata visualization</i></p>
+</td>
+<td width="33%">
+<img src="doc/QaDbboN.png" alt="Important Message from Richard Wettel">
+<p align="center"><i>Important message from the original creator</i></p>
 </td>
 </tr>
 </table>
