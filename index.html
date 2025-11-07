@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code City - 3D Isometric</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2c3e50;
+            color: #ecf0f1;
+            overflow: hidden;
+        }
+
+        #container {
+            display: flex;
+            height: 100vh;
+        }
+
+        #canvas-container {
+            flex: 1;
+            position: relative;
+            background: #2c3e50;
+            overflow: hidden;
+        }
+
+        #canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #resizer {
+            width: 5px;
+            background: #7f8c8d;
+            cursor: ew-resize;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        #resizer:hover {
+            background: #3498db;
+        }
+
+        #info-panel {
+            width: 320px;
+            min-width: 200px;
+            max-width: 600px;
+            background: #34495e;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        #info-panel h2 {
+            color: #3498db;
+            font-size: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #7f8c8d;
+        }
+
+        #info-panel h3 {
+            color: #ecf0f1;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info-item {
+            margin-bottom: 12px;
+            padding: 8px;
+            background: rgba(44, 62, 80, 0.5);
+            border-radius: 4px;
+        }
+
+        .info-label {
+            color: #95a5a6;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #ecf0f1;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .stats {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #7f8c8d;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(127, 140, 141, 0.3);
+        }
+
+        .stat-label {
+            color: #95a5a6;
+        }
+
+        .stat-value {
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid #3498db;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #bdc3c7;
+        }
+
+        #file-input-section {
+            display: none;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(52, 152, 219, 0.15);
+            border: 2px dashed #3498db;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        #file-input-section h3 {
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        #file-input-section p {
+            color: #bdc3c7;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        #file-input-section label {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        #file-input-section label:hover {
+            background: #2980b9;
+        }
+
+        #file-status {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #95a5a6;
+        }
+
+        .tech-note {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid #27ae60;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
+        <div id="resizer"></div>
+        <div id="info-panel">
+            <h2>Code City 3D</h2>
+            <div class="instructions">
+                <strong>Instructions:</strong><br>
+                • Hover over buildings to see details<br>
+                • Click to select a building<br>
+                • Package platforms = gray bases<br>
+                • Building height = lines of code<br>
+                • Blue = hovered, Red = selected<br>
+                • Dashed borders = deprecated classes
+            </div>
+            <div id="git-controls" style="margin-top: 20px; padding: 15px; background: rgba(52, 152, 219, 0.05); border-radius: 4px; display: none;">
+                <h3 style="margin-bottom: 10px; font-size: 14px;">Git Visualization</h3>
+                <label style="display: block; margin-bottom: 8px; font-size: 12px; cursor: pointer;">
+                    <input type="checkbox" id="toggle-frequency" checked style="margin-right: 8px;">
+                    Color by Change Frequency
+                </label>
+                <label style="display: block; margin-bottom: 8px; font-size: 12px; cursor: pointer;">
+                    <input type="checkbox" id="toggle-age" checked style="margin-right: 8px;">
+                    Fade Old Files (Saturation)
+                </label>
+                <label style="display: block; margin-bottom: 8px; font-size: 12px; cursor: pointer;">
+                    <input type="checkbox" id="toggle-glow" checked style="margin-right: 8px;">
+                    Glow Recent Changes
+                </label>
+                <label style="display: block; font-size: 12px; cursor: pointer;">
+                    <input type="checkbox" id="colorblind-mode" style="margin-right: 8px;">
+                    Color-Blind Friendly Mode
+                </label>
+            </div>
+            <div id="git-legend" style="margin-top: 15px; display: none;">
+                <h4 style="font-size: 13px; margin-bottom: 10px; color: #ecf0f1;">Color Legend</h4>
+                <div style="margin-bottom: 12px;">
+                    <div style="font-size: 11px; color: #95a5a6; margin-bottom: 5px;">FREQUENCY</div>
+                    <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                        <div style="width: 20px; height: 20px; background: hsl(0, 70%, 50%); border-radius: 2px; margin-right: 8px;"></div>
+                        <span style="font-size: 11px;">High (Red)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                        <div style="width: 20px; height: 20px; background: hsl(120, 70%, 50%); border-radius: 2px; margin-right: 8px;"></div>
+                        <span style="font-size: 11px;">Medium (Green)</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <div style="width: 20px; height: 20px; background: hsl(240, 70%, 50%); border-radius: 2px; margin-right: 8px;"></div>
+                        <span style="font-size: 11px;">Low (Blue)</span>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 11px; color: #95a5a6; margin-bottom: 5px;">AGE (Saturation)</div>
+                    <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                        <div style="width: 20px; height: 20px; background: hsl(200, 70%, 50%); border-radius: 2px; margin-right: 8px;"></div>
+                        <span style="font-size: 11px;">Recent (Vibrant)</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <div style="width: 20px; height: 20px; background: hsl(200, 20%, 50%); border-radius: 2px; margin-right: 8px;"></div>
+                        <span style="font-size: 11px;">Old (Faded)</span>
+                    </div>
+                </div>
+            </div>
+            <div id="file-input-section">
+                <h3>Load Your Data</h3>
+                <p>Select the data.json file generated by generate-city-data.sh</p>
+                <label for="dataFileInput">
+                    Choose File
+                    <input type="file" id="dataFileInput" accept=".json,application/json" style="display: none;">
+                </label>
+                <div id="file-status"></div>
+            </div>
+            <div id="details">
+                <h3>Project Overview</h3>
+                <div id="project-stats" class="stats"></div>
+            </div>
+            <div class="tech-note">
+                ⚙️ Zero Dependencies<br>
+                Pure Canvas 2D with isometric projection<br>
+                Built to last 10+ years
+            </div>
+        </div>
+    </div>
+    <script>
+        // Resizable panel functionality
+        (function() {
+            const resizer = document.getElementById('resizer');
+            const infoPanel = document.getElementById('info-panel');
+            const container = document.getElementById('container');
+
+            let isResizing = false;
+
+            resizer.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                document.body.style.cursor = 'ew-resize';
+                document.body.style.userSelect = 'none';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+
+                const containerRect = container.getBoundingClientRect();
+                const newWidth = containerRect.right - e.clientX;
+
+                // Apply min/max constraints
+                if (newWidth >= 200 && newWidth <= 600) {
+                    infoPanel.style.width = newWidth + 'px';
+                    // Trigger canvas resize
+                    if (window.resizeCanvas) {
+                        window.resizeCanvas();
+                    }
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
+                }
+            });
+        })();
+    </script>
+    <script src="git-metadata-visualizer.js"></script>
+    <script src="canvas-visualizer.js"></script>
+</body>
+</html>
