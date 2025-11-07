@@ -62,6 +62,13 @@ let buildings = [];
 let packages = [];
 let gitColorManager = null;
 
+// Panning state
+let isPanning = false;
+let panStartX = 0;
+let panStartY = 0;
+let panOffsetX = 0;
+let panOffsetY = 0;
+
 // Load and render on page load
 document.addEventListener('DOMContentLoaded', () => {
     canvas = document.getElementById('canvas');
@@ -75,6 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('click', handleClick);
     canvas.addEventListener('wheel', handleWheel, { passive: false });
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
 
     // Setup controls
     setupGitControls();
@@ -780,6 +790,18 @@ function handleMouseMove(event) {
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
 
+    // Handle panning if middle mouse button is held
+    if (isPanning) {
+        const deltaX = mouseX - panStartX;
+        const deltaY = mouseY - panStartY;
+
+        CONFIG.offsetX = panOffsetX + deltaX;
+        CONFIG.offsetY = panOffsetY + deltaY;
+
+        renderCity();
+        return;
+    }
+
     let foundHovered = null;
     let maxDepth = -Infinity;
 
@@ -852,6 +874,39 @@ function handleWheel(event) {
     CONFIG.offsetY = mouseY - worldY * CONFIG.scale;
 
     renderCity();
+}
+
+// Handle mouse down for panning
+function handleMouseDown(event) {
+    // Middle mouse button (button === 1)
+    if (event.button === 1) {
+        event.preventDefault();
+        isPanning = true;
+
+        const rect = canvas.getBoundingClientRect();
+        panStartX = event.clientX - rect.left;
+        panStartY = event.clientY - rect.top;
+        panOffsetX = CONFIG.offsetX;
+        panOffsetY = CONFIG.offsetY;
+
+        canvas.style.cursor = 'grab';
+    }
+}
+
+// Handle mouse up to stop panning
+function handleMouseUp(event) {
+    if (event.button === 1) {
+        isPanning = false;
+        canvas.style.cursor = 'default';
+    }
+}
+
+// Handle mouse leaving canvas to stop panning
+function handleMouseLeave(event) {
+    if (isPanning) {
+        isPanning = false;
+        canvas.style.cursor = 'default';
+    }
 }
 
 // Show building information
