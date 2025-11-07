@@ -10,6 +10,12 @@ const CONFIG = {
     locToHeightScale: 0.8,  // 1 LOC = 0.8px height
     minBuildingHeight: 10,
 
+    // Building size variation based on LOC
+    minBuildingWidth: 20,
+    maxBuildingWidth: 80,
+    minBuildingDepth: 20,
+    maxBuildingDepth: 80,
+
     // Isometric projection angles
     isoAngle: Math.PI / 6,  // 30 degrees
 
@@ -189,6 +195,25 @@ function calculatePackageMass(pkg) {
     return pkg.classes.reduce((sum, cls) => sum + cls.linesOfCode, 0);
 }
 
+// Calculate building footprint based on LOC for visual variety
+function calculateBuildingFootprint(linesOfCode) {
+    // Use square root scaling so footprint grows slower than height
+    // Small classes: ~20x20, Medium: ~30x30, Large (200+): ~50x50, Very large (500+): ~80x80
+    const scaleFactor = Math.sqrt(linesOfCode / 50); // Adjust denominator to control growth rate
+
+    const width = Math.min(
+        CONFIG.maxBuildingWidth,
+        Math.max(CONFIG.minBuildingWidth, CONFIG.buildingWidth * scaleFactor)
+    );
+
+    const depth = Math.min(
+        CONFIG.maxBuildingDepth,
+        Math.max(CONFIG.minBuildingDepth, CONFIG.buildingDepth * scaleFactor)
+    );
+
+    return { width, depth };
+}
+
 // Process data and create building/package objects
 function processData(data) {
     buildings = [];
@@ -251,6 +276,9 @@ function processData(data) {
                     pos.class.linesOfCode * CONFIG.locToHeightScale
                 );
 
+                // Calculate footprint based on LOC for visual variety
+                const footprint = calculateBuildingFootprint(pos.class.linesOfCode);
+
                 const building = {
                     className: pos.class.name,
                     packageName: pkg.name,
@@ -259,8 +287,8 @@ function processData(data) {
                     x: packageX + pos.x,
                     y: packageY + pos.y,
                     z: 5, // Buildings sit on top of platform
-                    width: CONFIG.buildingWidth,
-                    depth: CONFIG.buildingDepth,
+                    width: footprint.width,
+                    depth: footprint.depth,
                     height: buildingHeight,
                     color: CONFIG.buildingBaseColor
                 };
@@ -440,6 +468,9 @@ function calculatePackageLayout(pkg) {
     let totalDepth = CONFIG.packagePadding;
 
     sortedClasses.forEach((cls, index) => {
+        // Calculate this building's footprint for layout
+        const footprint = calculateBuildingFootprint(cls.linesOfCode);
+
         if (index > 0 && index % maxBuildingsPerRow === 0) {
             currentX = CONFIG.packagePadding;
             currentY += rowHeight + CONFIG.buildingSpacing;
@@ -452,10 +483,10 @@ function calculatePackageLayout(pkg) {
             class: cls
         });
 
-        currentX += CONFIG.buildingWidth + CONFIG.buildingSpacing;
-        rowHeight = Math.max(rowHeight, CONFIG.buildingDepth);
+        currentX += footprint.width + CONFIG.buildingSpacing;
+        rowHeight = Math.max(rowHeight, footprint.depth);
         maxWidth = Math.max(maxWidth, currentX);
-        totalDepth = Math.max(totalDepth, currentY + CONFIG.buildingDepth);
+        totalDepth = Math.max(totalDepth, currentY + footprint.depth);
     });
 
     return {
