@@ -2,6 +2,23 @@
 
 A simple, durable solution for visualizing any codebase as a 3D city.
 
+## Inspiration
+
+**Inspired by:** [CodeCity by Richard Wettel](https://wettel.github.io/index.html) - the pioneering work in code visualization as cities.
+
+<table>
+<tr>
+<td width="50%">
+<img src="doc/codecity.png" alt="Original CodeCity">
+<p align="center"><i>Original CodeCity concept by Richard Wettel</i></p>
+</td>
+<td width="50%">
+<img src="doc/screenshot.png" alt="Our Implementation">
+<p align="center"><i>Our implementation with git metadata visualization</i></p>
+</td>
+</tr>
+</table>
+
 ## Philosophy
 
 Built to last 10+ years using only standard Unix tools and web technologies:
